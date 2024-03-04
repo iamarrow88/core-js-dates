@@ -119,8 +119,30 @@ function getNextFriday(date) {
  * 1, 2024 => 31
  * 2, 2024 => 29
  */
-function getCountDaysInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountDaysInMonth(month, year) {
+  switch (month) {
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+    case 8:
+    case 10:
+    case 12: {
+      return 31;
+    }
+    case 4:
+    case 6:
+    case 9:
+    case 11: {
+      return 30;
+    }
+    default: {
+      if (year % 4) {
+        return 28;
+      }
+      return 29;
+    }
+  }
 }
 
 /**
@@ -134,8 +156,10 @@ function getCountDaysInMonth(/* month, year */) {
  * '2024-02-01T00:00:00.000Z', '2024-02-02T00:00:00.000Z'  => 2
  * '2024-02-01T00:00:00.000Z', '2024-02-12T00:00:00.000Z'  => 12
  */
-function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
-  throw new Error('Not implemented');
+function getCountDaysOnPeriod(dateStart, dateEnd) {
+  const secondsDelta = Date.parse(dateEnd) - Date.parse(dateStart);
+  const msInADay = 24 * 60 * 60 * 1000;
+  return secondsDelta / msInADay + 1;
 }
 
 /**

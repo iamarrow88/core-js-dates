@@ -120,29 +120,7 @@ function getNextFriday(date) {
  * 2, 2024 => 29
  */
 function getCountDaysInMonth(month, year) {
-  switch (month) {
-    case 1:
-    case 3:
-    case 5:
-    case 7:
-    case 8:
-    case 10:
-    case 12: {
-      return 31;
-    }
-    case 4:
-    case 6:
-    case 9:
-    case 11: {
-      return 30;
-    }
-    default: {
-      if (year % 4) {
-        return 28;
-      }
-      return 29;
-    }
-  }
+  return new Date(Date.UTC(year, month, 0)).getDate();
 }
 
 /**
@@ -223,8 +201,26 @@ function formatDate(date) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const weekends = [5, 6];
+  const eightWeekends = 28;
+  const lastDay = new Date(Date.UTC(year, month, 0));
+  let theLastDateWeekNumber = lastDay.getDay();
+  const theLastDateNumber = lastDay.getDate();
+  const delta = theLastDateNumber - eightWeekends;
+  let weekendsCounter = 8;
+
+  for (let i = 0; i < delta; i += 1) {
+    theLastDateWeekNumber -= 1;
+
+    if (theLastDateWeekNumber < 0) {
+      theLastDateWeekNumber = 6;
+    }
+    if (weekends.includes(theLastDateWeekNumber)) {
+      weekendsCounter += 1;
+    }
+  }
+  return weekendsCounter;
 }
 
 /**
@@ -239,8 +235,29 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+
+  const firstYearDayWeekNumber = new Date(Date.UTC(year, 0)).getDay();
+  let firstWeekDaysCounter;
+  if (firstYearDayWeekNumber === 1) {
+    firstWeekDaysCounter = 0;
+  } else if (firstYearDayWeekNumber === 0) {
+    firstWeekDaysCounter = 1;
+  } else {
+    firstWeekDaysCounter = 8 - firstYearDayWeekNumber;
+  }
+
+  let fullRangeDaysCounter = day - firstWeekDaysCounter;
+
+  for (let i = month; i > 0; i -= 1) {
+    fullRangeDaysCounter += new Date(year, i, 0).getDate();
+  }
+
+  const weekNumber = Math.ceil(fullRangeDaysCounter / 7);
+  return firstWeekDaysCounter ? weekNumber + 1 : weekNumber;
 }
 
 /**
